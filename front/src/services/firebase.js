@@ -2,9 +2,9 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyAssI8OwgrfjNJ5ZMKO0lloZisTUEvhvUg",
+  authDomain: "twinmindappinterview.firebaseapp.com",
+  projectId: "twinmindappinterview",
 };
 
 const app = initializeApp(firebaseConfig);
