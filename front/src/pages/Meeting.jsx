@@ -65,7 +65,7 @@ export default function Meeting() {
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-4">Meeting in Progress</h1>
       <button
-        className={\`px-4 py-2 rounded text-white \${recording ? "bg-red-500" : "bg-green-600"}\`}
+        className={`px-4 py-2 rounded text-white ${recording ? "bg-red-500" : "bg-green-600"}`}
         onClick={recording ? stopRecording : startRecording}
       >
         {recording ? "Stop Recording" : "Start Meeting"}
