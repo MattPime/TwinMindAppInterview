@@ -14,7 +14,7 @@ export default function ChatBox({ transcript }) {
     const systemMsg = { role: "assistant", text: "" };
     setMessages((prev) => [...prev, systemMsg]);
 
-    const response = await fetch("http://localhost:5000/api/chat", {
+    const response = await fetch("https://twinmind-backend.onrender.com/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ transcript, query }),
@@ -53,9 +53,10 @@ export default function ChatBox({ transcript }) {
           Send
         </button>
       </form>
+
       <div className="bg-gray-100 p-4 rounded h-60 overflow-y-auto">
         {messages.map((msg, i) => (
-          <div key={i} className={\`mb-2 \${msg.role === "user" ? "text-right" : ""}\`}>
+          <div key={i} className={`mb-2 ${msg.role === "user" ? "text-right" : ""}`}>
             <span className="inline-block bg-white p-2 rounded shadow-sm">
               {msg.text}
             </span>
