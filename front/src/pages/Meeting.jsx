@@ -41,25 +41,28 @@ export default function Meeting() {
     navigate("/summary");
   };
 
-  const sendAudioChunk = async () => {
-    const blob = new Blob(audioChunks.current, { type: "audio/webm" });
-    audioChunks.current = [];
+const sendAudioChunk = async () => {
+  console.log("Sending audio chunk...");
+  const blob = new Blob(audioChunks.current, { type: "audio/webm" });
+  audioChunks.current = [];
 
-    const formData = new FormData();
-    formData.append("audio", blob);
+  const formData = new FormData();
+  formData.append("audio", blob);
 
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/api/asr", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+  const token = localStorage.getItem("token");
+  const res = await fetch("https://twinmind-backend.onrender.com/api/asr", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
 
-    const data = await res.json();
-    setTranscript((prev) => prev + "\n" + data.transcript);
-  };
+  const data = await res.json();
+  console.log("Transcript chunk received:", data.transcript);
+  setTranscript((prev) => prev + "\n" + data.transcript);
+};
+
 
   return (
     <div className="p-6">
