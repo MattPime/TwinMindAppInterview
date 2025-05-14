@@ -1,17 +1,22 @@
 import express from "express";
+import cors from "cors";
 import multer from "multer";
+
+import summaryRoutes from "./routes/summary.js";
+import chatRoutes from "./routes/chat.js";
+import fs from "fs";
 import fetch from "node-fetch";
 import FormData from "form-data";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 
-const router = express.Router();
-const upload = multer({ dest: "temp/" }); // Save audio locally
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// File upload middleware for ASR
+const upload = multer({ dest: "temp/" });
 
-router.post("/", upload.single("audio"), async (req, res) => {
+// Whisper ASR Endpoint (OpenAI)
+app.post("/api/asr", upload.single("audio"), async (req, res) => {
   try {
     const audioPath = req.file.path;
 
@@ -20,24 +25,30 @@ router.post("/", upload.single("audio"), async (req, res) => {
     formData.append("model", "whisper-1");
     formData.append("response_format", "json");
 
-    const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+    const openaiRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: formData,
     });
 
-    const result = await response.json();
-
-    // Clean up temp file
-    fs.unlinkSync(audioPath);
+    const result = await openaiRes.json();
+    fs.unlinkSync(audioPath); // Clean up
 
     res.json({ transcript: result.text });
-  } catch (error) {
-    console.error("Whisper API error:", error);
-    res.status(500).json({ error: "Failed to transcribe audio." });
+  } catch (err) {
+    console.error("ASR error:", err);
+    res.status(500).json({ error: "Transcription failed." });
   }
 });
 
-export default router;
+// Additional routes
+app.use("/api/chat", chatRoutes);
+app.use("/api/summary", summaryRoutes);
+
+// ✅ Required by Render to detect server
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`✅ Server running on port ${port}`);
+});
