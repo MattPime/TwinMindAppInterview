@@ -3,20 +3,25 @@ const router = express.Router();
 
 router.post("/", (req, res) => {
   const { transcript } = req.body;
+  console.log("Generating summary from:", transcript?.slice(0, 100));
+
+  if (!transcript || transcript.length === 0) {
+    return res.status(400).json({ error: "Empty transcript" });
+  }
 
   const summary = {
     sections: [
       {
         title: "Meeting Overview",
-        content: "The meeting covered various updates and team goals.",
+        content: "This is a summary generated from your dummy transcript.",
       },
       {
         title: "Key Points",
-        content: "• Discussed product roadmap.\n• Outlined deliverables.\n• Assigned tasks.",
+        content: "- Point A\n- Point B\n- Point C",
       },
       {
         title: "Next Steps",
-        content: "Each team member to follow up on their respective tasks by next week.",
+        content: "Follow-up by next week.",
       },
     ],
   };
