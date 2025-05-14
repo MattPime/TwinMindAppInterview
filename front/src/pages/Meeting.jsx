@@ -24,8 +24,9 @@ export default function Meeting() {
 
       intervalRef.current = setInterval(() => {
         mediaRecorderRef.current.stop();
-        mediaRecorderRef.current.start();
-      }, 30000);
+        mediaRecorderRef.current.start(); // restart for next chunk
+      }, 5000); // 5 seconds
+
 
       setRecording(true);
     } catch (err) {
