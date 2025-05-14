@@ -15,8 +15,10 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 app.post("/api/asr", upload.single("audio"), (req, res) => {
   const dummyText = `Dummy transcript at ${new Date().toLocaleTimeString()}`;
+  console.log("ASR hit - sending:", dummyText);
   res.json({ transcript: dummyText });
 });
+
 
 app.use("/api/chat", chatRoutes);
 app.use("/api/summary", summaryRoutes);
