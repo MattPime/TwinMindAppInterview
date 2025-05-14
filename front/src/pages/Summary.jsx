@@ -6,25 +6,33 @@ export default function Summary() {
 useEffect(() => {
   const fetchSummary = async () => {
     const token = localStorage.getItem("token");
-    const transcript = localStorage.getItem("finalTranscript") || "";
-    console.log("Sending transcript to summary:", transcript.slice(0, 100));
+    const transcript = localStorage.getItem("finalTranscript");
 
-    const res = await fetch("https://twinmind-backend.onrender.com/api/summary", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ transcript }),
-    });
+    if (!transcript || transcript.trim().length === 0) {
+      console.warn("No transcript found for summary.");
+      return;
+    }
 
-    const data = await res.json();
-    console.log("Summary received:", data);
-    setSummary(data);
+    try {
+      const res = await fetch("https://twinmind-backend.onrender.com/api/summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ transcript }),
+      });
+
+      const data = await res.json();
+      setSummary(data);
+    } catch (err) {
+      console.error("Summary generation failed:", err);
+    }
   };
 
   fetchSummary();
 }, []);
+
 
 
   if (!summary) return <p className="p-6">Loading summary...</p>;
