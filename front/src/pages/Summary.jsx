@@ -3,24 +3,29 @@ import { useEffect, useState } from "react";
 export default function Summary() {
   const [summary, setSummary] = useState(null);
 
-  useEffect(() => {
-    const fetchSummary = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/summary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ transcript: localStorage.getItem("finalTranscript") || "" }),
-      });
+useEffect(() => {
+  const fetchSummary = async () => {
+    const token = localStorage.getItem("token");
+    const transcript = localStorage.getItem("finalTranscript") || "";
+    console.log("Sending transcript to summary:", transcript.slice(0, 100));
 
-      const data = await res.json();
-      setSummary(data);
-    };
+    const res = await fetch("https://twinmind-backend.onrender.com/api/summary", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ transcript }),
+    });
 
-    fetchSummary();
-  }, []);
+    const data = await res.json();
+    console.log("Summary received:", data);
+    setSummary(data);
+  };
+
+  fetchSummary();
+}, []);
+
 
   if (!summary) return <p className="p-6">Loading summary...</p>;
 
