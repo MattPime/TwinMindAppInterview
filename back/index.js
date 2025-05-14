@@ -1,26 +1,43 @@
 import express from "express";
-import cors from "cors";
 import multer from "multer";
+import fetch from "node-fetch";
+import FormData from "form-data";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import chatRoutes from "./routes/chat.js";
-import summaryRoutes from "./routes/summary.js";
+const router = express.Router();
+const upload = multer({ dest: "temp/" }); // Save audio locally
 
-const app = express();
-const port = process.env.PORT || 5000;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-app.use(cors());
-app.use(express.json());
+router.post("/", upload.single("audio"), async (req, res) => {
+  try {
+    const audioPath = req.file.path;
 
-const upload = multer({ storage: multer.memoryStorage() });
+    const formData = new FormData();
+    formData.append("file", fs.createReadStream(audioPath));
+    formData.append("model", "whisper-1");
+    formData.append("response_format", "json");
 
-app.post("/api/asr", upload.single("audio"), (req, res) => {
-  const dummyText = `Dummy transcript at ${new Date().toLocaleTimeString()}`;
-  console.log("ASR hit - sending:", dummyText);
-  res.json({ transcript: dummyText });
+    const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+      },
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    // Clean up temp file
+    fs.unlinkSync(audioPath);
+
+    res.json({ transcript: result.text });
+  } catch (error) {
+    console.error("Whisper API error:", error);
+    res.status(500).json({ error: "Failed to transcribe audio." });
+  }
 });
 
-
-app.use("/api/chat", chatRoutes);
-app.use("/api/summary", summaryRoutes);
-
-app.listen(port, () => console.log(`Server listening on port ${port}`));
+export default router;
