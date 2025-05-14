@@ -7,19 +7,20 @@ router.post("/", async (req, res) => {
   res.setHeader("Content-Type", "text/plain");
   res.setHeader("Transfer-Encoding", "chunked");
 
-  const responseChunks = [
+  const chunks = [
     "That's a great question. ",
     "Based on the transcript, ",
-    "it looks like the team discussed key deliverables. ",
-    "Let me summarize them for you. ",
+    "it seems the discussion focused on project progress. ",
+    "Let me explain further... ",
   ];
 
-  for (const chunk of responseChunks) {
+  for (const chunk of chunks) {
     res.write(chunk);
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 400));
   }
 
   res.end();
 });
 
 export default router;
+
