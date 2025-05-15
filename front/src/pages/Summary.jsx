@@ -6,16 +6,16 @@ export default function Summary() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const BACKEND_URL = "https://your-backend-service.onrender.com"; // REPLACE this!
+  const BACKEND_URL = "https://twinmindappinterview.onrender.com";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const transcript = localStorage.getItem("finalTranscript");
 
-    console.log("🧾 Loaded transcript:", transcript);
+    console.log("Loaded transcript:", transcript);
 
     if (!transcript || transcript.trim().length === 0) {
-      console.warn("⚠️ No transcript found for summary.");
+      console.warn("No transcript found for summary.");
       setLoading(false);
       return;
     }
@@ -32,10 +32,10 @@ export default function Summary() {
         });
 
         const data = await res.json();
-        console.log("📄 Summary response:", data);
+        console.log("Summary response:", data);
         setSummary(data);
       } catch (err) {
-        console.error("❌ Failed to fetch summary:", err);
+        console.error("Failed to fetch summary:", err);
       } finally {
         setLoading(false);
       }
