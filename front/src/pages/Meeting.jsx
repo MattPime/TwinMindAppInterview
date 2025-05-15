@@ -16,11 +16,12 @@ export default function Meeting() {
   const analyserRef = useRef(null);
   const dataArrayRef = useRef(null);
 
+  const BACKEND_URL = "https://twinmindappinterview.onrender.com";
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // Audio visual feedback setup
       audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
       const source = audioContextRef.current.createMediaStreamSource(stream);
       analyserRef.current = audioContextRef.current.createAnalyser();
@@ -31,10 +32,9 @@ export default function Meeting() {
       const detectSpeech = () => {
         analyserRef.current.getByteFrequencyData(dataArrayRef.current);
         const avgVolume = dataArrayRef.current.reduce((a, b) => a + b, 0) / dataArrayRef.current.length;
-        setIsSpeaking(avgVolume > 10); // Adjust threshold as needed
+        setIsSpeaking(avgVolume > 10);
       };
 
-      // Recording setup
       mediaRecorderRef.current = new MediaRecorder(stream);
       mediaRecorderRef.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -48,7 +48,7 @@ export default function Meeting() {
         detectSpeech();
         mediaRecorderRef.current.stop();
         mediaRecorderRef.current.start();
-      }, 3000); // every 3s
+      }, 3000);
 
       setRecording(true);
     } catch (err) {
@@ -65,35 +65,33 @@ export default function Meeting() {
   };
 
   const sendAudioChunk = async () => {
-  const blob = new Blob(audioChunks.current, { type: "audio/webm" });
-  audioChunks.current = [];
+    const blob = new Blob(audioChunks.current, { type: "audio/webm" });
+    audioChunks.current = [];
 
-  const formData = new FormData();
-  formData.append("audio", blob);
+    const formData = new FormData();
+    formData.append("audio", blob);
 
-  const token = localStorage.getItem("token");
-  console.log("🎤 Sending audio chunk to ASR...");
+    const token = localStorage.getItem("token");
+    console.log("🎤 Sending chunk to ASR...");
 
-  try {
-    const res = await fetch("https://your-backend-url.onrender.com/api/asr", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/asr`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-    const data = await res.json();
-    console.log("ASR response:", data);
-
-    if (data.transcript) {
-      setTranscript((prev) => prev + "\n" + data.transcript);
+      const data = await res.json();
+      console.log("ASR response:", data);
+      if (data.transcript) {
+        setTranscript((prev) => prev + "\n" + data.transcript);
+      }
+    } catch (err) {
+      console.error("ASR error:", err);
     }
-  } catch (err) {
-    console.error("ASR request failed:", err);
-  }
-};
-
+  };
 
   useEffect(() => {
     return () => {
