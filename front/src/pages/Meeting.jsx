@@ -140,6 +140,13 @@ export default function Meeting() {
       </div>
 
       <ChatBox transcript={transcript} />
+
+      <button
+        onClick={() => navigate("/Login")}
+        className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Sign Out
+      </button>
     </div>
   );
 }
