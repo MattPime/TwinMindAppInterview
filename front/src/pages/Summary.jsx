@@ -2,48 +2,61 @@ import { useEffect, useState } from "react";
 
 export default function Summary() {
   const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchSummary = async () => {
+  const BACKEND_URL = "https://twinmindappinterview.onrender.com";
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     const transcript = localStorage.getItem("finalTranscript");
 
+    console.log("Loaded transcript:", transcript);
+
     if (!transcript || transcript.trim().length === 0) {
       console.warn("No transcript found for summary.");
+      setLoading(false);
       return;
     }
 
-    try {
-      const res = await fetch("https://twinmind-backend.onrender.com/api/summary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ transcript }),
-      });
+    const fetchSummary = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/summary`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ transcript }),
+        });
 
-      const data = await res.json();
-      setSummary(data);
-    } catch (err) {
-      console.error("Summary generation failed:", err);
-    }
-  };
+        const data = await res.json();
+        console.log("Summary response:", data);
+        setSummary(data);
+      } catch (err) {
+        console.error("Failed to fetch summary:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchSummary();
-}, []);
+    fetchSummary();
+  }, []);
 
+  if (loading) {
+    return <div className="p-6 text-gray-500">Loading summary...</div>;
+  }
 
-
-  if (!summary) return <p className="p-6">Loading summary...</p>;
+  if (!summary || !summary.sections) {
+    return <div className="p-6 text-red-500">No summary available.</div>;
+  }
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-4">Meeting Summary</h1>
-      {summary.sections.map((section, idx) => (
-        <div key={idx} className="mb-4">
-          <h2 className="text-lg font-bold mb-1">{section.title}</h2>
-          <p className="text-gray-700">{section.content}</p>
+      {summary.sections.map((section, index) => (
+        <div key={index} className="mb-4">
+          <h2 className="text-lg font-semibold mb-1">{section.title}</h2>
+          <p className="bg-gray-100 p-4 rounded whitespace-pre-line">{section.content}</p>
         </div>
       ))}
     </div>
