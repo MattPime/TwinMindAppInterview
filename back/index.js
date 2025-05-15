@@ -4,6 +4,8 @@ import multer from "multer";
 
 import summaryRoutes from "./routes/summary.js";
 import chatRoutes from "./routes/chat.js";
+import asrRoute from "./routes/asr.js";
+
 import fs from "fs";
 import fetch from "node-fetch";
 import FormData from "form-data";
@@ -46,6 +48,8 @@ app.post("/api/asr", upload.single("audio"), async (req, res) => {
 // Additional routes
 app.use("/api/chat", chatRoutes);
 app.use("/api/summary", summaryRoutes);
+app.use(asrRoute);
+
 
 // ✅ Required by Render to detect server
 const port = process.env.PORT || 5000;
