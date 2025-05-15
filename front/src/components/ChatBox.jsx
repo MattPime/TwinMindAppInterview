@@ -3,6 +3,9 @@ import { useState } from "react";
 export default function ChatBox({ transcript }) {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const BACKEND_URL = "https://twinmindappinterview.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -10,32 +13,43 @@ export default function ChatBox({ transcript }) {
 
     const userMsg = { role: "user", text: query };
     setMessages((prev) => [...prev, userMsg]);
+    setQuery("");
+    setLoading(true);
 
     const systemMsg = { role: "assistant", text: "" };
     setMessages((prev) => [...prev, systemMsg]);
 
-    const response = await fetch("https://twinmind-backend.onrender.com/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ transcript, query }),
-    });
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcript, query }),
+      });
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let finalText = "";
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let result = "";
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      finalText += decoder.decode(value);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        result += decoder.decode(value);
+        setMessages((prev) =>
+          prev.map((msg, i) =>
+            i === prev.length - 1 ? { ...msg, text: result } : msg
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Chat error:", err);
       setMessages((prev) =>
         prev.map((msg, i) =>
-          i === prev.length - 1 ? { ...msg, text: finalText } : msg
+          i === prev.length - 1 ? { ...msg, text: "ERROR from assistant" } : msg
         )
       );
     }
 
-    setQuery("");
+    setLoading(false);
   };
 
   return (
@@ -49,15 +63,23 @@ export default function ChatBox({ transcript }) {
           className="flex-1 p-2 border rounded-l"
           placeholder="Ask a question..."
         />
-        <button type="submit" className="bg-blue-600 text-white px-4 rounded-r">
-          Send
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 rounded-r"
+          disabled={loading}
+        >
+          {loading ? "Thinking..." : "Send"}
         </button>
       </form>
 
       <div className="bg-gray-100 p-4 rounded h-60 overflow-y-auto">
         {messages.map((msg, i) => (
           <div key={i} className={`mb-2 ${msg.role === "user" ? "text-right" : ""}`}>
-            <span className="inline-block bg-white p-2 rounded shadow-sm">
+            <span
+              className={`inline-block px-3 py-2 rounded ${
+                msg.role === "user" ? "bg-blue-100" : "bg-white"
+              }`}
+            >
               {msg.text}
             </span>
           </div>
