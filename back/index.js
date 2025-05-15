@@ -8,7 +8,7 @@ import asrRoute from "./routes/asr.js";
 const app = express();
 
 //Allow only Vercel frontend
-app.use(cors({ origin: "https://twin-mind-app-interview.vercel.app/" }));
+app.use(cors({ origin: "https://twin-mind-app-interview.vercel.app" }));
 app.use(express.json());
 
 const upload = multer({ storage: multer.memoryStorage() });
