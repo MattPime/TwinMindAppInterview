@@ -1,18 +1,30 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Meeting from "./pages/Meeting";
-import Summary from "./pages/Summary";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Meeting from "./pages/Meeting.jsx";
+import Summary from "./pages/Summary.jsx";
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* Redirect root to /meeting */}
+        <Route path="/" element={<Navigate to="/meeting" replace />} />
+
+        {/* Meeting page */}
         <Route path="/meeting" element={<Meeting />} />
+
+        {/* Summary page */}
         <Route path="/summary" element={<Summary />} />
+
+        {/* Optional 404 fallback */}
+        <Route
+          path="*"
+          element={
+            <div className="p-6 text-center text-red-500">
+              404 - Page Not Found
+            </div>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
