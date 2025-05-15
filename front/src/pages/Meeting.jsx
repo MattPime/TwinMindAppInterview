@@ -116,10 +116,10 @@ export default function Meeting() {
       </button>
 
       {recording && (
-        <div className="mt-2 text-sm text-red-600 font-semibold">
-          🎙️ Microphone is ON — recording...
-        </div>
-      )}
+  <div className="mt-2 text-xs text-gray-500 italic">
+    (Simulated transcription – OpenAI Whisper disabled)
+  </div>
+)}
 
       <div className="mt-4 flex items-center gap-2">
         <span
