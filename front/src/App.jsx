@@ -1,35 +1,23 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SignIn from "./pages/SignIn.jsx";
+import Login from "./pages/Login";
 import Meeting from "./pages/Meeting.jsx";
 import Summary from "./pages/Summary.jsx";
-import RequireAuth from "./components/RequireAuth.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public sign-in page */}
-        <Route path="/" element={<SignIn />} />
+        <Route path="/" element={<Login />} />
+        {/* Redirect root to /Login */}
+        <Route path="/" element={<Navigate to="/Login" replace />} />
 
-        {/* Protected routes */}
-        <Route
-          path="/meeting"
-          element={
-            <RequireAuth>
-              <Meeting />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/summary"
-          element={
-            <RequireAuth>
-              <Summary />
-            </RequireAuth>
-          }
-        />
+        {/* Meeting page */}
+        <Route path="/meeting" element={<Meeting />} />
 
-        {/* Optional 404 */}
+        {/* Summary page */}
+        <Route path="/summary" element={<Summary />} />
+
+        {/* Optional 404 fallback */}
         <Route
           path="*"
           element={
