@@ -8,14 +8,13 @@ const router = express.Router();
 const upload = multer({ dest: "temp/" }); // Save uploaded audio temporarily
 
 router.post("/api/asr", upload.single("audio"), async (req, res) => {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-  if (!req.file) {
-    return res.status(400).json({ error: "No audio file uploaded" });
-  }
-
   try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No audio file uploaded" });
+    }
     const audioPath = req.file.path;
+    // Log file info
+    console.log("Received audio file:", req.file);
 
     const formData = new FormData();
     formData.append("file", fs.createReadStream(audioPath));
@@ -26,26 +25,27 @@ router.post("/api/asr", upload.single("audio"), async (req, res) => {
     const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: formData,
     });
 
     const data = await response.json();
+    console.log("OpenAI Whisper response:", data);
 
-    // Clean up the temporary file
     fs.unlinkSync(audioPath);
 
     if (data.error) {
-      console.error("Whisper error:", data.error);
-      return res.status(500).json({ error: "OpenAI Whisper failed", detail: data.error });
+      console.error("OpenAI Whisper error:", data.error);
+      return res.status(500).json({ error: "OpenAI Whisper failed", details: data.error });
     }
 
     res.json({ transcript: data.text });
   } catch (err) {
-    console.error("ASR failure:", err);
-    res.status(500).json({ error: "Transcription failed" });
+    console.error("Unexpected ASR error:", err);
+    res.status(500).json({ error: "Internal server error", details: err.message });
   }
 });
+
 
 export default router;
