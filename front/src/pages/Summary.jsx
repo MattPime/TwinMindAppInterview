@@ -9,6 +9,28 @@ export default function Summary() {
         console.log("Summary response:", data);
         setSummary(data);
         const user = auth.currentUser;
+
+useEffect(() => {
+  const saveSummaryToFirestore = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user && summary?.sections) {
+        await addDoc(collection(db, "summaries"), {
+          uid: user.uid,
+          sections: summary.sections,
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      console.error("Error saving summary:", err);
+    }
+  };
+
+  if (summary) {
+    saveSummaryToFirestore();
+  }
+}, [summary]);
+
 if (user && data?.sections) {
   await addDoc(collection(db, "summaries"), {
     uid: user.uid,
