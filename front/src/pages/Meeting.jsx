@@ -82,7 +82,7 @@ export default function Meeting() {
     navigate("/summary");
   } catch (err) {
     console.error("stopRecording() failed:", err);
-    alert("An error occurred while stopping the meeting.");
+    alert("An error occurred while stopping the meeting:\n" + err.message);
   }
 };
 
