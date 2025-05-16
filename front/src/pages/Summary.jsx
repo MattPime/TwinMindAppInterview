@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { db, auth } from "../services/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Summary() {
   const [summary, setSummary] = useState(null);
@@ -34,6 +36,14 @@ export default function Summary() {
         const data = await res.json();
         console.log("Summary response:", data);
         setSummary(data);
+        const user = auth.currentUser;
+if (user && data?.sections) {
+  await addDoc(collection(db, "summaries"), {
+    uid: user.uid,
+    sections: data.sections,
+    createdAt: serverTimestamp(),
+  });
+}
       } catch (err) {
         console.error("Failed to fetch summary:", err);
       } finally {
