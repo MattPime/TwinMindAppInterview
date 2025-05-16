@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { db, auth } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Summary() {
@@ -14,10 +14,7 @@ export default function Summary() {
     const token = localStorage.getItem("token");
     const transcript = localStorage.getItem("finalTranscript");
 
-    console.log("Loaded transcript:", transcript);
-
-    if (!transcript || transcript.trim().length === 0) {
-      console.warn("No transcript found for summary.");
+    if (!transcript) {
       setLoading(false);
       return;
     }
@@ -34,18 +31,19 @@ export default function Summary() {
         });
 
         const data = await res.json();
-        console.log("Summary response:", data);
         setSummary(data);
+
+        // 🔒 Save summary to Firestore
         const user = auth.currentUser;
-if (user && data?.sections) {
-  await addDoc(collection(db, "summaries"), {
-    uid: user.uid,
-    sections: data.sections,
-    createdAt: serverTimestamp(),
-  });
-}
+        if (user && data?.sections) {
+          await addDoc(collection(db, "summaries"), {
+            uid: user.uid,
+            sections: data.sections,
+            createdAt: serverTimestamp(),
+          });
+        }
       } catch (err) {
-        console.error("Failed to fetch summary:", err);
+        console.error("Summary error:", err);
       } finally {
         setLoading(false);
       }
@@ -54,21 +52,8 @@ if (user && data?.sections) {
     fetchSummary();
   }, []);
 
-  if (loading) {
-    return <div className="p-6 text-gray-500">Loading summary...</div>;
-  }
-
-  if (!summary || !summary.sections) {
-return <div className="p-6 text-red-500">
-      <button
-        onClick={() => navigate("/meeting")}
-        className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        ← Back to Meeting
-      </button>
-      
-      No summary available.</div>;
-  }
+  if (loading) return <div className="p-6">Loading summary...</div>;
+  if (!summary || !summary.sections) return <div className="p-6 text-red-500">No summary available.</div>;
 
   return (
     <div className="p-6">
@@ -80,10 +65,9 @@ return <div className="p-6 text-red-500">
       </button>
 
       <h1 className="text-2xl font-semibold mb-4">Meeting Summary</h1>
-
-      {summary.sections.map((section, index) => (
-        <div key={index} className="mb-4">
-          <h2 className="text-lg font-semibold mb-1">{section.title}</h2>
+      {summary.sections.map((section, i) => (
+        <div key={i} className="mb-4">
+          <h2 className="text-lg font-semibold">{section.title}</h2>
           <p className="bg-gray-100 p-4 rounded whitespace-pre-line">{section.content}</p>
         </div>
       ))}
