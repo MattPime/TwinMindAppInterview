@@ -113,13 +113,26 @@ if (user) {
 
 
   useEffect(() => {
-    return () => {
-      clearInterval(intervalRef.current);
-      if (mediaRecorderRef.current?.state === "recording") {
-        mediaRecorderRef.current.stop();
+  const saveSummaryToFirestore = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user && summary?.sections) {
+        await addDoc(collection(db, "summaries"), {
+          uid: user.uid,
+          sections: summary.sections,
+          createdAt: serverTimestamp(),
+        });
       }
-    };
-  }, []);
+    } catch (err) {
+      console.error("Error saving summary:", err);
+    }
+  };
+
+  if (summary) {
+    saveSummaryToFirestore();
+  }
+}, [summary]);
+
 
   return (
     <div className="p-6">
