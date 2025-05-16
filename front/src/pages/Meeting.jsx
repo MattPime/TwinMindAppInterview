@@ -2,106 +2,26 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import { getAuth, signOut } from "firebase/auth";
-import { db, auth } from "../services/firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [transcript, setTranscript] = useState("");
-
-  const mediaRecorderRef = useRef(null);
-  const audioChunks = useRef([]);
-  const intervalRef = useRef(null);
-  const navigate = useNavigate();
-
-  const audioContextRef = useRef(null);
-  const analyserRef = useRef(null);
-  const dataArrayRef = useRef(null);
-
-  const BACKEND_URL = "https://twinmindappinterview.onrender.com";
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-      const source = audioContextRef.current.createMediaStreamSource(stream);
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 256;
-      source.connect(analyserRef.current);
-      dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount);
-
-      const detectSpeech = () => {
-        analyserRef.current.getByteFrequencyData(dataArrayRef.current);
-        const avgVolume = dataArrayRef.current.reduce((a, b) => a + b, 0) / dataArrayRef.current.length;
-        setIsSpeaking(avgVolume > 10);
-      };
-
-      mediaRecorderRef.current = new MediaRecorder(stream);
-      mediaRecorderRef.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.current.push(event.data);
-        }
-      };
-      mediaRecorderRef.current.onstop = sendAudioChunk;
-      mediaRecorderRef.current.start();
-
-      intervalRef.current = setInterval(() => {
-        detectSpeech();
-        mediaRecorderRef.current.stop();
-        mediaRecorderRef.current.start();
-      }, 3000);
-
-      setRecording(true);
-    } catch (err) {
-      alert("Microphone access error: " + err.message);
+@@ -93,60 +94,73 @@
     }
   };
 
-  const stopRecording = () => {
-    clearInterval(intervalRef.current);
-    mediaRecorderRef.current.stop();
-    setRecording(false);
-    localStorage.setItem("finalTranscript", transcript);
-    navigate("/summary");
-  };
-
-  const sendAudioChunk = async () => {
-    const blob = new Blob(audioChunks.current, { type: "audio/webm" });
-    audioChunks.current = [];
-
-    const formData = new FormData();
-    formData.append("audio", blob);
-
-    const token = localStorage.getItem("token");
-    console.log("🎤 Sending chunk to ASR...");
-
+  const handleSignOut = async () => {
+    const auth = getAuth();
     try {
-      const res = await fetch(`${BACKEND_URL}/api/asr`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      await signOut(auth);
 
-      const data = await res.json();
-      console.log("ASR response:", data);
-      if (data.transcript) {
-        setTranscript((prev) => prev + "\n" + data.transcript);
-      }
-    } catch (err) {
-      console.error("ASR error:", err);
+      // Redirect to login page
+      navigate("/login");
+    
+    } catch (error) {
+      console.error("Error signing out:", error);
     }
   };
-
-  const handleSignOut = () => {
-  localStorage.removeItem("token");
-  navigate("/", { replace: true });
-};
-
-
+  
   useEffect(() => {
     return () => {
       clearInterval(intervalRef.current);
@@ -113,7 +33,10 @@ export default function Meeting() {
 
   return (
     <div className="p-6">
-      <button onClick={handleSignOut} className="px-4 py-2 bg-gray-400 text-white rounded">
+      <button
+        onClick={() => navigate("/Login")}
+        className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
         Sign Out
       </button>
 
