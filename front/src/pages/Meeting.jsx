@@ -76,4 +76,3 @@ export default function Meeting() {
       <ChatBox transcript={transcript} />
     </div>
   );
-}
