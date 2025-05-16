@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
+import { getAuth, signOut } from "firebase/auth";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
@@ -93,6 +94,19 @@ export default function Meeting() {
     }
   };
 
+  const handleSignOut = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+
+      // Redirect to login page
+      navigate("/login");
+    
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+  
   useEffect(() => {
     return () => {
       clearInterval(intervalRef.current);
