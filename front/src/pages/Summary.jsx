@@ -5,7 +5,6 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Summary() {
   const [summary, setSummary] = useState(null);
-@@ -34,27 +36,35 @@
         const data = await res.json();
         console.log("Summary response:", data);
         setSummary(data);
