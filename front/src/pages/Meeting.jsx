@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import { getAuth, signOut } from "firebase/auth";
+import { db, auth } from "../services/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
@@ -62,6 +64,15 @@ export default function Meeting() {
     mediaRecorderRef.current.stop();
     setRecording(false);
     localStorage.setItem("finalTranscript", transcript);
+    const user = auth.currentUser;
+if (user && transcript.trim()) {
+  const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
+  await setDoc(ref, {
+    uid: user.uid,
+    transcript,
+    createdAt: serverTimestamp(),
+  });
+}
     navigate("/summary");
   };
 
