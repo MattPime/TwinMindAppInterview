@@ -60,21 +60,31 @@ export default function Meeting() {
   };
 
   const stopRecording = async () => {
+    console.log("Stop Meeting button clicked");
+  try {
     clearInterval(intervalRef.current);
     mediaRecorderRef.current.stop();
     setRecording(false);
+
     localStorage.setItem("finalTranscript", transcript);
+
+    // 🔐 Save transcript to Firestore
     const user = auth.currentUser;
-if (user && transcript.trim()) {
-  const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
-  await setDoc(ref, {
-    uid: user.uid,
-    transcript,
-    createdAt: serverTimestamp(),
-  });
-}
+    if (user && transcript.trim()) {
+      const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
+      await setDoc(ref, {
+        uid: user.uid,
+        transcript,
+        createdAt: serverTimestamp(),
+      });
+    }
+
     navigate("/summary");
-  };
+  } catch (err) {
+    console.error("stopRecording() failed:", err);
+    alert("An error occurred while stopping the meeting.");
+  }
+};
 
   const sendAudioChunk = async () => {
     const blob = new Blob(audioChunks.current, { type: "audio/webm" });
