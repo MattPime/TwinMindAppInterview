@@ -9,6 +9,17 @@ export default function Login() {
   provider.setCustomParameters({ prompt: "select_account" });
 
   try {
+    const result = await signInWithPopup(auth, provider);
+    const token = await result.user.getIdToken(); //  Get token
+    localStorage.setItem("token", token);         //  Save to localStorage
+    navigate("/meeting");
+  } catch (error) {
+    console.error("Login error:", error);
+  }
+};
+
+
+  try {
     await signInWithPopup(auth, provider);
     // Navigate to dashboard or meeting page
     navigate("/meeting");
