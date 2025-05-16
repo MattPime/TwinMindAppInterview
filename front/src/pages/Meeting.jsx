@@ -150,6 +150,7 @@ useEffect(() => {
 
 
   return (
+    <>
     <div className="p-6">
    <button onClick={handleSignOut} className="px-4 py-2 bg-gray-400 text-white rounded">
         Sign Out
@@ -193,21 +194,21 @@ useEffect(() => {
       <ChatBox transcript={transcript} />
     </div>
 
-    <div className="mt-8">
-  <h2 className="text-xl font-semibold mb-2">Past Meetings</h2>
-  <ul className="space-y-2">
-    {pastMeetings.map((meeting) => (
-      <li key={meeting.id}>
-        <Link
-          to={`/meeting/${meeting.id}`}
-          className="text-blue-600 hover:underline"
-        >
-          {new Date(meeting.createdAt?.seconds * 1000).toLocaleString()}
-        </Link>
-      </li>
-    ))}
-  </ul>
-</div>
-
-  );
+<div className="mt-8">
+      <h2 className="text-xl font-semibold mb-2">Past Meetings</h2>
+      <ul className="space-y-2">
+        {pastMeetings.map((meeting) => (
+          <li key={meeting.id}>
+            <Link
+              to={`/meeting/${meeting.id}`}
+              className="text-blue-600 hover:underline"
+            >
+              {new Date(meeting.createdAt?.seconds * 1000).toLocaleString()}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </>
+);
 }
