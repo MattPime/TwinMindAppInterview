@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import { getAuth, signOut } from "firebase/auth";
+import { db, auth } from "../services/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
