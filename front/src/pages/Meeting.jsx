@@ -5,7 +5,6 @@ import { getAuth, signOut } from "firebase/auth";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
-@@ -93,60 +94,73 @@
     }
   };
 
