@@ -59,7 +59,7 @@ export default function Meeting() {
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     clearInterval(intervalRef.current);
     mediaRecorderRef.current.stop();
     setRecording(false);
