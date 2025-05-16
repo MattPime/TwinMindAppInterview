@@ -1,24 +1,19 @@
-import { GoogleAuthProvider, signInWithPopup, auth, provider } from "../services/firebase";
+import { signInWithPopup, auth, provider } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const handleLogin = async () => {
-  const provider = new GoogleAuthProvider();
-
-  //Force account selection each time
-  provider.setCustomParameters({
-    prompt: "select_account"
-  });
-
-  const auth = getAuth();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    // Do something with result.user
-  } catch (error) {
-    console.error("Login failed:", error);
-  }
-};
-
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const token = await result.user.getIdToken();
+      localStorage.setItem("token", token);
+      navigate("/meeting");
+    } catch (error) {
+      alert("Login failed: " + error.message);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
