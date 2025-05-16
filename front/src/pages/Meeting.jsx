@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
-import { getAuth, signOut } from "firebase/auth";
-import { db, auth } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Meeting() {
@@ -19,7 +18,7 @@ export default function Meeting() {
   const analyserRef = useRef(null);
   const dataArrayRef = useRef(null);
 
-  const BACKEND_URL = "https://twinmindappinterview.onrender.com";
+  const BACKEND_URL = "https://your-backend.onrender.com"; // ✅ Replace this
 
   const startRecording = async () => {
     try {
@@ -59,22 +58,25 @@ export default function Meeting() {
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     clearInterval(intervalRef.current);
     mediaRecorderRef.current.stop();
     setRecording(false);
-    localStorage.setItem("finalTranscript", transcript);
-    navigate("/summary");
 
+    localStorage.setItem("finalTranscript", transcript);
+
+    // 🔐 Save transcript to Firestore
     const user = auth.currentUser;
-if (user) {
-  const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
-  await setDoc(ref, {
-    uid: user.uid,
-    transcript,
-    createdAt: serverTimestamp(),
-  });
-}
+    if (user && transcript.trim()) {
+      const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
+      await setDoc(ref, {
+        uid: user.uid,
+        transcript,
+        createdAt: serverTimestamp(),
+      });
+    }
+
+    navigate("/summary");
   };
 
   const sendAudioChunk = async () => {
@@ -85,19 +87,15 @@ if (user) {
     formData.append("audio", blob);
 
     const token = localStorage.getItem("token");
-    console.log("🎤 Sending chunk to ASR...");
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/asr`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
       const data = await res.json();
-      console.log("ASR response:", data);
       if (data.transcript) {
         setTranscript((prev) => prev + "\n" + data.transcript);
       }
@@ -105,12 +103,6 @@ if (user) {
       console.error("ASR error:", err);
     }
   };
-
-  const handleSignOut = () => {
-  localStorage.removeItem("token");
-  navigate("/", { replace: true });
-};
-
 
   useEffect(() => {
     return () => {
@@ -121,13 +113,8 @@ if (user) {
     };
   }, []);
 
-
   return (
     <div className="p-6">
-      <button onClick={handleSignOut} className="px-4 py-2 bg-gray-400 text-white rounded">
-        Sign Out
-      </button>
-
       <h1 className="text-2xl font-semibold mb-4">Meeting in Progress</h1>
 
       <button
@@ -136,14 +123,8 @@ if (user) {
         }`}
         onClick={recording ? stopRecording : startRecording}
       >
-        {recording ? "Stop Recording" : "Start Meeting"}
+        {recording ? "Stop Meeting" : "Start Meeting"}
       </button>
-
-      {recording && (
-  <div className="mt-2 text-xs text-gray-500 italic">
-    (Simulated transcription – OpenAI Whisper disabled)
-  </div>
-)}
 
       <div className="mt-4 flex items-center gap-2">
         <span
@@ -167,3 +148,4 @@ if (user) {
     </div>
   );
 }
+
