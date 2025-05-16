@@ -11,6 +11,7 @@ export default function Login() {
   try {
     await signInWithPopup(auth, provider);
     // Navigate to dashboard or meeting page
+    navigate("/meeting");
   } catch (error) {
     console.error("Login error:", error);
   }
