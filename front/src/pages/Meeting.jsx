@@ -65,6 +65,16 @@ export default function Meeting() {
     setRecording(false);
     localStorage.setItem("finalTranscript", transcript);
     navigate("/summary");
+
+    const user = auth.currentUser;
+if (user) {
+  const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
+  await setDoc(ref, {
+    uid: user.uid,
+    transcript,
+    createdAt: serverTimestamp(),
+  });
+}
   };
 
   const sendAudioChunk = async () => {
