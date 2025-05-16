@@ -18,7 +18,7 @@ export default function Meeting() {
   const analyserRef = useRef(null);
   const dataArrayRef = useRef(null);
 
-  const BACKEND_URL = "https://your-backend.onrender.com"; // ✅ Replace this
+  const BACKEND_URL = "https://twinmindappinterview.onrender.com";
 
   const startRecording = async () => {
     try {
