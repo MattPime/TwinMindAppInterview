@@ -5,8 +5,7 @@ import { getAuth, signOut } from "firebase/auth";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
-    }
-  };
+    };
 
   const handleSignOut = async () => {
     const auth = getAuth();
