@@ -60,14 +60,12 @@ export default function Summary() {
 
   if (!summary || !summary.sections) {
     return (
-      <div>
       <button
         onClick={() => navigate("/meeting")}
         className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
       >
         ← Back to Meeting
       </button>
-        </div>
       <div className="p-6 text-red-500">No summary available.</div>);
   }
 
