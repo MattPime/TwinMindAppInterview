@@ -196,7 +196,7 @@ export default function Meeting() {
 
           {recording && <p className="text-sm text-gray-400 mb-2">(Recording simulated — Whisper disabled)</p>}
 
-          <div className="mt-6">
+          <div className="mt-6 bg-white p-4 rounded-lg shadow text-gray-700">
           <h2 className="font-semibold text-lg mb-2">Transcript:</h2>
           <pre className="bg-white border rounded-xl p-4 shadow-sm max-h-64 overflow-y-auto whitespace-pre-wrap">
             {transcript}
