@@ -12,9 +12,6 @@ export default function Summary() {
 
   const BACKEND_URL = "https://twinmindappinterview.onrender.com";
 
-  await updateDoc(ref, {
-  summary: data.sections,
-});
   
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -57,8 +54,26 @@ export default function Summary() {
       }
     };
 
+      const saveSummaryToFirestore = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const meetingId = localStorage.getItem("meetingId");
+      const ref = doc(db, "meetings", meetingId);
+
+      if (meetingId && data?.sections) {
+        await updateDoc(ref, { summary: data.sections });
+      }
+    } catch (err) {
+      console.error("Failed to save summary:", err);
+    }
+  };
+
+  if (data?.sections) {
+    saveSummaryToFirestore();
+  }
+  }
     fetchSummary();
-  }, []);
+  }, [data]);
 
   if (loading) {
     return <div className="p-6 text-gray-500">Loading summary...</div>;
