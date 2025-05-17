@@ -19,6 +19,8 @@ export default function Meeting() {
   const analyserRef = useRef(null);
   const dataArrayRef = useRef(null);
 
+  const [events, setEvents] = useState([]);
+
   const BACKEND_URL = "https://twinmindappinterview.onrender.com";
 
   const startRecording = async () => {
@@ -131,6 +133,38 @@ const handleSignOut = () => {
 
   const [pastMeetings, setPastMeetings] = useState([]);
 
+  useEffect(() => {
+    const fetchCalendar = async () => {
+      const user = getAuth().currentUser;
+      if (!user) return;
+
+      try {
+        const token = await user.getIdTokenResult();
+        const accessToken = token.claims.firebase?.identities?.["google.com"]?.[0];
+
+        
+        const credential = await user.getIdToken();
+        const result = await user.getIdTokenResult();
+        const accessToken = result.token; //token to use in fetch below
+
+        const res = await fetch(
+          "https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=5&orderBy=startTime&singleEvents=true",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+        setEvents(data.items || []);
+      } catch (err) {
+        console.error("Failed to fetch calendar events:", err);
+      }
+    };
+
+    fetchCalendar();
+
 useEffect(() => {
   const fetchMeetings = async () => {
     const user = auth.currentUser;
@@ -156,6 +190,21 @@ useEffect(() => {
    <button onClick={handleSignOut} className="px-4 py-2 bg-gray-400 text-white rounded">
         Sign Out
       </button>
+
+      <div className="mt-8">
+  <h2 className="text-xl font-semibold mb-2">Upcoming Calendar Events</h2>
+  <ul className="space-y-2">
+    {events.length === 0 && <p>No events found or access denied.</p>}
+    {events.map((event) => (
+      <li key={event.id} className="bg-gray-100 p-2 rounded">
+        <div className="font-semibold">{event.summary}</div>
+        <div className="text-sm text-gray-600">
+          {new Date(event.start.dateTime || event.start.date).toLocaleString()}
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
 
       <h1 className="text-2xl font-semibold mb-4">Meeting in Progress</h1>
 
