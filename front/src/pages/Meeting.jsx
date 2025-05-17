@@ -196,15 +196,21 @@ export default function Meeting() {
 
           {recording && <p className="text-sm text-gray-400 mb-2">(Recording simulated — Whisper disabled)</p>}
 
-          <div className="mb-6">
-          <h3 className="text-lg font-medium mb-1">Transcript</h3>
-          <div className="bg-gray-50 border rounded-xl p-4 h-48 overflow-y-auto whitespace-pre-wrap">
-            {transcript || "(Waiting for input...)"}
-</div>
+          <div className="mt-6">
+          <h2 className="font-semibold text-lg mb-2">Transcript:</h2>
+          <pre className="bg-gray-100 p-4 rounded h-60 overflow-y-auto whitespace-pre-wrap">
+            {transcript}
+          </pre>
         </div>
 
         <ChatBox transcript={transcript} />
       </div>
+<div className="mt-6">
+        <h2 className="font-semibold text-lg mb-2">Transcript:</h2>
+        <pre className="bg-gray-100 p-4 rounded h-60 overflow-y-auto whitespace-pre-wrap">
+          {transcript}
+        </pre>
+</div>
 
         <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-3 text-gray-800">Past Meetings</h2>
