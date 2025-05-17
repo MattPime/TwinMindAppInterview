@@ -82,7 +82,7 @@ export default function Meeting() {
     // 🔐 Save transcript to Firestore
     const user = auth.currentUser;
     if (user && transcript.trim()) {
-      const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
+      //const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
       await setDoc(ref, {
         uid: user.uid,
         transcript,
@@ -91,7 +91,7 @@ export default function Meeting() {
     }
 
     if (user && meetingId && data?.sections) {
-  const ref = doc(db, "meetings", meetingId);
+  //const ref = doc(db, "meetings", meetingId);
   await updateDoc(ref, {
     summary: data.sections,
   });
