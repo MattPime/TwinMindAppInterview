@@ -7,9 +7,15 @@ export default function Summary() {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const meetingId = localStorage.getItem("meetingId");
+  const ref = doc(db, "meetings", meetingId);
 
   const BACKEND_URL = "https://twinmindappinterview.onrender.com";
 
+  await updateDoc(ref, {
+  summary: data.sections,
+});
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
     const transcript = localStorage.getItem("finalTranscript");
