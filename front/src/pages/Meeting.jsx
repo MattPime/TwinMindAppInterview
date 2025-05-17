@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useLocation } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import { getAuth, signOut } from "firebase/auth";
@@ -9,7 +9,6 @@ export default function Meeting() {
   const [recording, setRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState("");
-  const location = useLocation();
 
   const mediaRecorderRef = useRef(null);
   const audioChunks = useRef([]);
@@ -148,7 +147,7 @@ useEffect(() => {
   };
 
   fetchMeetings();
-}, [location.state?.refreshed]);
+}, []);
 
 
   return (
