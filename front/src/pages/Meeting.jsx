@@ -128,10 +128,7 @@ const handleSignOut = () => {
     };
   }, []);
 
-const MeetingPage = () => {
   const [pastMeetings, setPastMeetings] = useState([]);
-  const db = getFirestore();
-  const auth = getAuth();
 
 useEffect(() => {
   const fetchMeetings = async () => {
@@ -149,7 +146,7 @@ useEffect(() => {
   };
 
   fetchMeetings();
-}, [])};
+}, []);
 
 
   return (
