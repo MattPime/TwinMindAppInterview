@@ -1,7 +1,3 @@
-/*
-  TwinMind Interview App - Updated Frontend Layout with Enhanced Styling
-  Modern UI w/ Tailwind styling, calendar support, and clean component structure
-*/
 
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -17,6 +13,17 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import "./index.css";
+
+
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
