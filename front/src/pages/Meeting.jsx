@@ -1,3 +1,8 @@
+/*
+  TwinMind Interview App - Updated Frontend Layout with Enhanced Styling
+  Modern UI w/ Tailwind styling, calendar support, and clean component structure
+*/
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
@@ -165,76 +170,78 @@ export default function Meeting() {
   }, []);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Meeting Dashboard</h1>
-        <div className="flex gap-3">
-          <button onClick={connectCalendar} className="px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">
-            {calendarConnected ? "Calendar Connected ✅" : "Connect Calendar"}
-          </button>
-          <button onClick={handleSignOut} className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300 text-sm">
-            Sign Out
-          </button>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-md p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Live Meeting</h2>
-          <button
-            onClick={recording ? stopRecording : startRecording}
-            className={`px-6 py-2 rounded-xl text-white font-semibold shadow-md transition ${recording ? "bg-red-500 hover:bg-red-600" : "bg-green-600 hover:bg-green-700"}`}
-          >
-            {recording ? "Stop Recording" : "Start Meeting"}
-          </button>
-        </div>
-
-        {recording && <p className="text-sm text-gray-400 mb-2">(Recording simulated — Whisper disabled)</p>}
-
-        <div className="mb-4">
-          <span className={`inline-block w-3 h-3 rounded-full mr-2 ${isSpeaking ? "bg-green-500" : "bg-gray-300"}`}></span>
-          <span className="text-sm">{isSpeaking ? "Listening..." : "Idle"}</span>
-        </div>
-
-        <div className="mb-6">
-          <h3 className="text-lg font-medium mb-1">Transcript</h3>
-          <div className="bg-gray-50 border rounded-xl p-4 h-48 overflow-y-auto whitespace-pre-wrap">
-            {transcript || "(Waiting for input...)"}
+    <div className="min-h-screen bg-gray-100 font-sans">
+      <div className="p-6 max-w-5xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-extrabold text-gray-800">Meeting Dashboard</h1>
+          <div className="flex gap-3">
+            <button onClick={connectCalendar} className="px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">
+              {calendarConnected ? "Calendar Connected ✅" : "Connect Calendar"}
+            </button>
+            <button onClick={handleSignOut} className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300 text-sm">
+              Sign Out
+            </button>
           </div>
         </div>
 
-        <ChatBox transcript={transcript} />
-      </div>
+        <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold text-gray-700">Live Meeting</h2>
+            <button
+              onClick={recording ? stopRecording : startRecording}
+              className={`px-6 py-2 rounded-xl text-white font-semibold shadow-md transition ${recording ? "bg-red-500 hover:bg-red-600" : "bg-green-600 hover:bg-green-700"}`}
+            >
+              {recording ? "Stop Recording" : "Start Meeting"}
+            </button>
+          </div>
 
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-3">Past Meetings</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          {pastMeetings.map((meeting) => (
-            <Link key={meeting.id} to={`/meeting/${meeting.id}`} className="block p-4 bg-white border rounded-2xl shadow-sm hover:shadow-lg transition">
-              <div className="text-gray-700 font-medium">
-                {new Date(meeting.createdAt?.seconds * 1000).toLocaleString()}
-              </div>
-              <div className="text-sm text-blue-500">View transcript →</div>
-            </Link>
-          ))}
+          {recording && <p className="text-sm text-gray-400 mb-2">(Recording simulated — Whisper disabled)</p>}
+
+          <div className="mb-4">
+            <span className={`inline-block w-3 h-3 rounded-full mr-2 ${isSpeaking ? "bg-green-500" : "bg-gray-300"}`}></span>
+            <span className="text-sm">{isSpeaking ? "Listening..." : "Idle"}</span>
+          </div>
+
+          <div className="mb-6">
+            <h3 className="text-lg font-medium mb-1 text-gray-800">Transcript</h3>
+            <div className="bg-gray-50 border rounded-xl p-4 h-48 overflow-y-auto whitespace-pre-wrap">
+              {transcript || "(Waiting for input...)"}
+            </div>
+          </div>
+
+          <ChatBox transcript={transcript} />
         </div>
-      </div>
 
-      {calendarConnected && (
-        <div className="mt-10">
-          <h2 className="text-xl font-semibold mb-3">Upcoming Calendar Events</h2>
-          <div className="grid gap-4">
-            {calendarEvents.map((event) => (
-              <div key={event.id} className="p-4 bg-white border rounded-xl shadow-sm">
-                <div className="font-semibold text-gray-800">{event.summary}</div>
-                <div className="text-sm text-gray-500">
-                  {new Date(event.start.dateTime || event.start.date).toLocaleString()}
+        <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-3 text-gray-800">Past Meetings</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {pastMeetings.map((meeting) => (
+              <Link key={meeting.id} to={`/meeting/${meeting.id}`} className="block p-4 bg-gray-50 border rounded-xl shadow-sm hover:shadow-lg transition">
+                <div className="text-gray-700 font-medium">
+                  {new Date(meeting.createdAt?.seconds * 1000).toLocaleString()}
                 </div>
-              </div>
+                <div className="text-sm text-blue-500">View transcript →</div>
+              </Link>
             ))}
           </div>
         </div>
-      )}
+
+        {calendarConnected && (
+          <div className="bg-white rounded-2xl shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-3 text-gray-800">Upcoming Calendar Events</h2>
+            <div className="grid gap-4">
+              {calendarEvents.map((event) => (
+                <div key={event.id} className="p-4 bg-gray-50 border rounded-xl shadow-sm">
+                  <div className="font-semibold text-gray-800">{event.summary}</div>
+                  <div className="text-sm text-gray-500">
+                    {new Date(event.start.dateTime || event.start.date).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
