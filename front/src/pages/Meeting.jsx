@@ -46,26 +46,7 @@ export default function Meeting() {
         if (event.data.size > 0) {
           audioChunks.current.push(event.data);
         }
-      };
-      mediaRecorderRef.current.onstop = sendAudioChunk;
-      mediaRecorderRef.current.start();
-
-      intervalRef.current = setInterval(() => {
-        detectSpeech();
-        mediaRecorderRef.current.stop();
-        mediaRecorderRef.current.start();
-      }, 3000);
-
-      setRecording(true);
-    } catch (err) {
-      alert("Microphone access error: " + err.message);
-    }
-  };
-
-  const stopRecording = async () => {
-    const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
-    await setDoc(ref, {
-  uid: user.uid,
+@@ -66,166 +69,173 @@
   transcript,
   createdAt: serverTimestamp(),
   summary: null, // placeholder for later
@@ -82,7 +63,7 @@ export default function Meeting() {
     // 🔐 Save transcript to Firestore
     const user = auth.currentUser;
     if (user && transcript.trim()) {
-      //const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
+      const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
       await setDoc(ref, {
         uid: user.uid,
         transcript,
@@ -91,7 +72,7 @@ export default function Meeting() {
     }
 
     if (user && meetingId && data?.sections) {
-  //const ref = doc(db, "meetings", meetingId);
+  const ref = doc(db, "meetings", meetingId);
   await updateDoc(ref, {
     summary: data.sections,
   });
