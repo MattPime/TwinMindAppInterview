@@ -205,12 +205,6 @@ export default function Meeting() {
 
         <ChatBox transcript={transcript} />
       </div>
-<div className="mt-6">
-        <h2 className="font-semibold text-lg mb-2">Transcript:</h2>
-        <pre className="bg-gray-100 p-4 rounded h-60 overflow-y-auto whitespace-pre-wrap">
-          {transcript}
-        </pre>
-</div>
 
         <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-3 text-gray-800">Past Meetings</h2>
