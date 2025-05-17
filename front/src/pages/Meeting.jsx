@@ -11,7 +11,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
@@ -72,14 +72,12 @@ export default function Meeting() {
   };
 
   const stopRecording = async () => {
-    console.log("Stop Meeting button clicked");
     try {
       clearInterval(intervalRef.current);
       mediaRecorderRef.current.stop();
       setRecording(false);
 
       localStorage.setItem("finalTranscript", transcript);
-
       const user = auth.currentUser;
       if (user && transcript.trim()) {
         const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
@@ -91,7 +89,6 @@ export default function Meeting() {
         });
         localStorage.setItem("meetingId", ref.id);
       }
-
       navigate("/summary");
     } catch (err) {
       console.error("stopRecording() failed:", err);
@@ -102,35 +99,23 @@ export default function Meeting() {
   const sendAudioChunk = async () => {
     const blob = new Blob(audioChunks.current, { type: "audio/webm" });
     audioChunks.current = [];
-
     const formData = new FormData();
     formData.append("audio", blob);
-
     const token = localStorage.getItem("token");
-    console.log("🎤 Sending chunk to ASR...");
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/asr`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
       const data = await res.json();
-      console.log("ASR response:", data);
       if (data.transcript) {
         setTranscript((prev) => prev + "\n" + data.transcript);
       }
     } catch (err) {
       console.error("ASR error:", err);
     }
-  };
-
-  const handleSignOut = () => {
-    localStorage.removeItem("token");
-    navigate("/", { replace: true });
   };
 
   const connectCalendar = async () => {
@@ -140,23 +125,22 @@ export default function Meeting() {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
 
-      // Call Google Calendar API
       const res = await fetch(
         "https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=5&orderBy=startTime&singleEvents=true",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const data = await res.json();
       setCalendarEvents(data.items || []);
       setCalendarConnected(true);
     } catch (err) {
-      console.error("Google Calendar connection failed:", err);
       alert("Failed to connect to Google Calendar.");
     }
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    navigate("/", { replace: true });
   };
 
   useEffect(() => {
@@ -172,109 +156,86 @@ export default function Meeting() {
     const fetchMeetings = async () => {
       const user = auth.currentUser;
       if (!user) return;
-
       const q = query(collection(db, "meetings"), where("uid", "==", user.uid));
       const snapshot = await getDocs(q);
-      const meetings = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
+      const meetings = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setPastMeetings(meetings);
     };
-
     fetchMeetings();
   }, []);
 
   return (
-    <>
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
-          <button
-            onClick={handleSignOut}
-            className="px-4 py-2 bg-gray-400 text-white rounded"
-          >
-            Sign Out
-          </button>
-
-          <button
-            onClick={connectCalendar}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
+    <div className="p-6 max-w-4xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Meeting Dashboard</h1>
+        <div className="flex gap-3">
+          <button onClick={connectCalendar} className="px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">
             {calendarConnected ? "Calendar Connected ✅" : "Connect Calendar"}
           </button>
+          <button onClick={handleSignOut} className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300 text-sm">
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-md p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Live Meeting</h2>
+          <button
+            onClick={recording ? stopRecording : startRecording}
+            className={`px-6 py-2 rounded-xl text-white font-semibold shadow-md transition ${recording ? "bg-red-500 hover:bg-red-600" : "bg-green-600 hover:bg-green-700"}`}
+          >
+            {recording ? "Stop Recording" : "Start Meeting"}
+          </button>
         </div>
 
-        <h1 className="text-2xl font-semibold mb-4">Meeting in Progress</h1>
+        {recording && <p className="text-sm text-gray-400 mb-2">(Recording simulated — Whisper disabled)</p>}
 
-        <button
-          className={`px-4 py-2 rounded text-white ${
-            recording ? "bg-red-500" : "bg-green-600"
-          }`}
-          onClick={recording ? stopRecording : startRecording}
-        >
-          {recording ? "Stop Recording" : "Start Meeting"}
-        </button>
+        <div className="mb-4">
+          <span className={`inline-block w-3 h-3 rounded-full mr-2 ${isSpeaking ? "bg-green-500" : "bg-gray-300"}`}></span>
+          <span className="text-sm">{isSpeaking ? "Listening..." : "Idle"}</span>
+        </div>
 
-        {recording && (
-          <div className="mt-2 text-xs text-gray-500 italic">
-            (Simulated transcription – OpenAI Whisper disabled)
+        <div className="mb-6">
+          <h3 className="text-lg font-medium mb-1">Transcript</h3>
+          <div className="bg-gray-50 border rounded-xl p-4 h-48 overflow-y-auto whitespace-pre-wrap">
+            {transcript || "(Waiting for input...)"}
           </div>
-        )}
-
-        <div className="mt-4 flex items-center gap-2">
-          <span
-            className={`inline-block w-3 h-3 rounded-full transition ${
-              isSpeaking ? "bg-green-500" : "bg-gray-300"
-            }`}
-          ></span>
-          <span className="text-sm">
-            {isSpeaking ? "Listening..." : "Waiting for voice..."}
-          </span>
-        </div>
-
-        <div className="mt-6">
-          <h2 className="font-semibold text-lg mb-2">Transcript:</h2>
-          <pre className="bg-gray-100 p-4 rounded h-60 overflow-y-auto whitespace-pre-wrap">
-            {transcript}
-          </pre>
         </div>
 
         <ChatBox transcript={transcript} />
       </div>
 
-      <div className="p-6">
-        <h2 className="text-xl font-semibold mb-2">Past Meetings</h2>
-        <ul className="space-y-2">
+      <div className="mt-10">
+        <h2 className="text-xl font-semibold mb-3">Past Meetings</h2>
+        <div className="grid md:grid-cols-2 gap-4">
           {pastMeetings.map((meeting) => (
-            <li key={meeting.id}>
-              <Link
-                to={`/meeting/${meeting.id}`}
-                className="text-blue-600 hover:underline"
-              >
+            <Link key={meeting.id} to={`/meeting/${meeting.id}`} className="block p-4 bg-white border rounded-2xl shadow-sm hover:shadow-lg transition">
+              <div className="text-gray-700 font-medium">
                 {new Date(meeting.createdAt?.seconds * 1000).toLocaleString()}
-              </Link>
-            </li>
+              </div>
+              <div className="text-sm text-blue-500">View transcript →</div>
+            </Link>
           ))}
-        </ul>
+        </div>
       </div>
 
       {calendarConnected && (
-        <div className="p-6">
-          <h2 className="text-xl font-semibold mb-2">Upcoming Calendar Events</h2>
-          <ul className="space-y-2">
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-3">Upcoming Calendar Events</h2>
+          <div className="grid gap-4">
             {calendarEvents.map((event) => (
-              <li key={event.id} className="bg-gray-100 p-2 rounded">
-                <div className="font-semibold">{event.summary}</div>
-                <div className="text-sm text-gray-600">
+              <div key={event.id} className="p-4 bg-white border rounded-xl shadow-sm">
+                <div className="font-semibold text-gray-800">{event.summary}</div>
+                <div className="text-sm text-gray-500">
                   {new Date(event.start.dateTime || event.start.date).toLocaleString()}
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
