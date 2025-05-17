@@ -60,12 +60,20 @@ export default function Meeting() {
   };
 
   const stopRecording = async () => {
+    const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
+    await setDoc(ref, {
+  uid: user.uid,
+  transcript,
+  createdAt: serverTimestamp(),
+  summary: null, // placeholder for later
+});
     console.log("Stop Meeting button clicked");
   try {
     clearInterval(intervalRef.current);
     mediaRecorderRef.current.stop();
     setRecording(false);
 
+    localStorage.setItem("meetingId", ref.id);
     localStorage.setItem("finalTranscript", transcript);
 
     // 🔐 Save transcript to Firestore
