@@ -14,8 +14,8 @@ import {
 } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
+import App from "../App.jsx";
+import "../index.css";
 
 
 
