@@ -142,7 +142,7 @@ useEffect(() => {
       ...doc.data(),
     }));
 
-    setPastMeetings(meetings);
+    setPastMeetings(meetings.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds));
   };
 
   fetchMeetings();
@@ -195,20 +195,28 @@ useEffect(() => {
     </div>
 
 <div className="mt-8">
-      <h2 className="text-xl font-semibold mb-2">Past Meetings</h2>
-      <ul className="space-y-2">
-        {pastMeetings.map((meeting) => (
-          <li key={meeting.id}>
-            <Link
-              to={`/meeting/${meeting.id}`}
-              className="text-blue-600 hover:underline"
-            >
-              {new Date(meeting.createdAt?.seconds * 1000).toLocaleString()}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+  <h2 className="text-xl font-semibold mb-2">Past Meetings</h2>
+  <ul className="space-y-2">
+    {pastMeetings.length === 0 && (
+      <p className="text-gray-500 italic">No past meetings yet.</p>
+    )}
+
+    {pastMeetings.map((meeting) => (
+      <li key={meeting.id}>
+        <Link
+          to={`/meeting/${meeting.id}`}
+          className="text-blue-600 hover:underline"
+        >
+          {/* Safely format timestamp or fallback */}
+          {meeting.createdAt?.seconds
+            ? new Date(meeting.createdAt.seconds * 1000).toLocaleString()
+            : "Unnamed Meeting"}
+        </Link>
+      </li>
+    ))}
+  </ul>
+</div>
+
   </>
 );
 }
