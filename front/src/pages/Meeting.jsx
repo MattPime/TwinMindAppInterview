@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import { getAuth, signOut } from "firebase/auth";
 import { db, auth } from "../services/firebase";
-import { doc, setDoc, serverTimestamp, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, collection, query, where, getDocs, getFirestore } from "firebase/firestore";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
