@@ -19,9 +19,6 @@ export default function Meeting() {
   const analyserRef = useRef(null);
   const dataArrayRef = useRef(null);
 
-  const meetingId = localStorage.getItem("meetingId");
-  const user = auth.currentUser;
-
   const BACKEND_URL = "https://twinmindappinterview.onrender.com";
 
   const startRecording = async () => {
@@ -63,20 +60,12 @@ export default function Meeting() {
   };
 
   const stopRecording = async () => {
-    const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
-    await setDoc(ref, {
-  uid: user.uid,
-  transcript,
-  createdAt: serverTimestamp(),
-  summary: null, // placeholder for later
-});
     console.log("Stop Meeting button clicked");
   try {
     clearInterval(intervalRef.current);
     mediaRecorderRef.current.stop();
     setRecording(false);
 
-    localStorage.setItem("meetingId", ref.id);
     localStorage.setItem("finalTranscript", transcript);
 
     // 🔐 Save transcript to Firestore
@@ -89,13 +78,6 @@ export default function Meeting() {
         createdAt: serverTimestamp(),
       });
     }
-
-    if (user && meetingId && data?.sections) {
-  const ref = doc(db, "meetings", meetingId);
-  await updateDoc(ref, {
-    summary: data.sections,
-  });
-}
 
     navigate("/summary", { state: { fromMeeting: true } });
 
@@ -239,3 +221,4 @@ useEffect(() => {
   </>
 );
 }
+
