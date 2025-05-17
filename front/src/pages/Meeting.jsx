@@ -204,7 +204,7 @@ export default function Meeting() {
           <div className="mb-6">
             <h3 className="text-lg font-medium mb-1 text-gray-800">Transcript</h3>
             <div className="bg-gray-50 border rounded-xl p-4 h-48 overflow-y-auto whitespace-pre-wrap">
-              {transcript || "(Waiting for input...)"}
+              {transcript || "(Waiting for input...)"} <br />
             </div>
           </div>
 
