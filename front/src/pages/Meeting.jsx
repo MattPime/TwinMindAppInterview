@@ -177,7 +177,7 @@ export default function Meeting() {
             <button onClick={connectCalendar} className="px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">
               {calendarConnected ? "Calendar Connected ✅" : "Connect Calendar"}
             </button>
-            <button onClick={handleSignOut} className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300 text-sm">
+            <button onClick={handleSignOut} className="px-4 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-md">
               Sign Out
             </button>
           </div>
@@ -198,7 +198,7 @@ export default function Meeting() {
 
           <div className="mt-6">
           <h2 className="font-semibold text-lg mb-2">Transcript:</h2>
-          <pre className="bg-gray-100 p-4 rounded h-60 overflow-y-auto whitespace-pre-wrap">
+          <pre className="bg-white border rounded-xl p-4 shadow-sm max-h-64 overflow-y-auto whitespace-pre-wrap">
             {transcript}
           </pre>
         </div>
@@ -206,8 +206,8 @@ export default function Meeting() {
         <ChatBox transcript={transcript} />
       </div>
 
-        <div className="bg-white rounded-2xl shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-3 text-gray-800">Past Meetings</h2>
+        <div className="mt-10">
+          <h2 className="text-lg font-semibold mb-4">Past Meetings</h2>
           <div className="grid md:grid-cols-2 gap-4">
             {pastMeetings.map((meeting) => (
               <Link key={meeting.id} to={`/meeting/${meeting.id}`} className="block p-4 bg-gray-50 border rounded-xl shadow-sm hover:shadow-lg transition">
