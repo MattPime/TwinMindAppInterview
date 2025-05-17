@@ -71,7 +71,7 @@ export default function Summary() {
   if (data?.sections) {
     saveSummaryToFirestore();
   }
-  }
+  })
     fetchSummary();
   }, [data]);
 
