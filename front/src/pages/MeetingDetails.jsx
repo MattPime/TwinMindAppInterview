@@ -8,6 +8,14 @@ export default function MeetingDetails() {
   const [transcript, setTranscript] = useState("");
   const [summary, setSummary] = useState(null);
 
+  const docSnap = await getDoc(doc(db, "meetings", id));
+if (docSnap.exists()) {
+  const data = docSnap.data();
+  setTranscript(data.transcript || "");
+  setSummary(data.summary || null);
+}
+
+
   useEffect(() => {
     const fetchData = async () => {
       const transcriptDoc = await getDoc(doc(db, "meetings", id));
