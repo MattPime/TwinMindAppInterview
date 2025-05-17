@@ -66,7 +66,8 @@ export default function Summary() {
       >
         ← Back to Meeting
       </button>
-      <div className="p-6 text-red-500">No summary available.</div>);
+      <div className="p-6 text-red-500">No summary available.</div>
+    );
   }
 
   return (
