@@ -10,6 +10,7 @@ import {
   query,
   where,
   getDocs,
+  addDoc
 } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import ReactDOM from "react-dom/client";
@@ -84,14 +85,13 @@ export default function Meeting() {
       localStorage.setItem("finalTranscript", transcript);
       const user = auth.currentUser;
       if (user && transcript.trim()) {
-        const ref = doc(db, "meetings", `${user.uid}_${Date.now()}`);
-        await setDoc(ref, {
-          uid: user.uid,
-          transcript,
-          createdAt: serverTimestamp(),
-          summary: null,
-        });
-        localStorage.setItem("meetingId", ref.id);
+const docRef = await addDoc(collection(db, "meetings"), {
+  uid: user.uid,
+  transcript,
+  createdAt: serverTimestamp(),
+  summary: null,
+});
+localStorage.setItem("meetingId", docRef.id);
       }
       navigate("/summary");
     } catch (err) {
