@@ -1,20 +1,29 @@
-import express from "express";
-import multer from "multer";
+import express from 'express';
+import multer from 'multer';
+import { Configuration, OpenAIApi } from 'openai';
+import fs from 'fs';
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ dest: 'uploads/' });
 
-const dummyLines = [
-  "Welcome to today's meeting.",
-  "Let's review the project milestones.",
-  "The timeline looks good for Q3 delivery.",
-  "Any blockers we should discuss?",
-  "Thanks everyone, great work!"
-];
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
-router.post("/api/asr", upload.single("audio"), async (req, res) => {
-  const random = dummyLines[Math.floor(Math.random() * dummyLines.length)];
-  res.json({ transcript: random });
+router.post('/', upload.single('audio'), async (req, res) => {
+  try {
+    const resp = await openai.createTranscription(
+      fs.createReadStream(req.file.path),
+      'whisper-1'
+    );
+    fs.unlinkSync(req.file.path); // cleanup
+    res.json({ transcript: resp.data.text });
+  } catch (err) {
+    console.error("ASR error:", err.response?.data || err.message);
+    res.status(500).json({ error: "ASR failed" });
+  }
 });
 
 export default router;
+
