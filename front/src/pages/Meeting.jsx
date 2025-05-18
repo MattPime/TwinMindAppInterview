@@ -122,12 +122,6 @@ export default function Meeting() {
   }
 };
 
-  {recording && (
-  <div className="mt-2 text-sm text-green-600 font-medium">
-    🎙️ Recording in progress…
-  </div>
-)}
-
   const connectCalendar = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -198,6 +192,11 @@ export default function Meeting() {
             >
               {recording ? "Stop Recording" : "Start Meeting"}
             </button>
+            {recording && (
+  <div className="mt-2 text-sm text-green-600 font-medium">
+    🎙️ Recording in progress…
+  </div>
+)}
           </div>
 
 
