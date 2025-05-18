@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db, auth } from "../services/firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import ReactMarkdown from 'react-markdown';
 
 export default function Summary() {
   const [summary, setSummary] = useState(null);
@@ -83,8 +82,8 @@ return <div className="p-6 text-red-500">
       <h1 className="text-2xl font-semibold mb-4">Meeting Summary</h1>
 
       {summary.sections.map((section, index) => (
-  
-<ReactMarkdown className="prose">{section.content}</ReactMarkdown>
+    <h2 className="text-lg font-semibold mb-1">{section.title}</h2>
+    <p className="bg-gray-100 p-4 rounded whitespace-pre-line">{section.content}</p>
 ))}
     </div>
   );
