@@ -16,16 +16,15 @@ router.post('/', async (req, res) => {
         {
           role: "user",
           content: `Summarize the following meeting transcript into 3–5 clear sections. For each section:
-- Start with a title (e.g., "Project Updates") in bold
-- Follow with 2–5 bullet points, with a line break after each one
-Transcript:\n\n${transcript}`
+            - Start with a title (e.g., "Project Updates") in bold
+            - Follow with 2–5 bullet points, with a line break after each one
+            Transcript:\n\n${transcript}`
         }
       ]
     });
 
 const content = chat.choices[0].message.content;
 
-    // Wrap it in a fake section if you don’t want to parse
     res.json({
       sections: [
         { title: "Meeting Summary", content }
