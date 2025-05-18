@@ -34,11 +34,18 @@ export default function ChatBox({ transcript }) {
         const { done, value } = await reader.read();
         if (done) break;
         result += decoder.decode(value);
-        setMessages((prev) =>
-          prev.map((msg, i) =>
-            i === prev.length - 1 ? { ...msg, text: result } : msg
-          )
-        );
+try {
+  const parsed = JSON.parse(result);
+  const responseText = parsed.response || "No response";
+  setMessages((prev) =>
+    prev.map((msg, i) =>
+      i === prev.length - 1 ? { ...msg, text: responseText } : msg
+    )
+  );
+} catch {
+  // still reading, not full JSON yet
+}
+
       }
 
       if (!result) {
