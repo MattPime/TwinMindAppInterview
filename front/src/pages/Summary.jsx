@@ -83,8 +83,7 @@ return <div className="p-6 text-red-500">
 
         {summary.sections.map((section, index) => (
           <div key={index} className="bg-gray-50 p-3 rounded">
-          <div className="font-bold">Section {index + 1}:</div>
-          <div>{section.content}</div>
+          <span className="font-bold">Section {index + 1}:</span> {section.content}
           </div>
         ))}
     </div>
