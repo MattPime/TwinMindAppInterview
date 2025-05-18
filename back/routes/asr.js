@@ -31,7 +31,7 @@ router.post('/', upload.single('audio'), async (req, res) => {
     fs.unlinkSync(req.file.path); // clean up temp file
     res.json({ transcript: response.text });
   } catch (err) {
-    console.error("🔥 Whisper error:", err?.response?.data || err.message || err);
+    console.error("Whisper error:", err?.response?.data || err.message || err);
     res.status(500).json({ error: 'Whisper transcription failed' });
   }
 });
