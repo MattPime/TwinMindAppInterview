@@ -82,7 +82,10 @@ return <div className="p-6 text-red-500">
       <h1 className="text-2xl font-semibold mb-4">Meeting Summary</h1>
 
       {summary.sections.map((section, index) => (
-        <span className="font-bold">Section {index + 1}:</span> {section.content}
+  <div key={index} className="mb-4">
+    <h2 className="text-lg font-semibold mb-1">{section.title}</h2>
+    <p className="bg-gray-100 p-4 rounded whitespace-pre-line">{section.content}</p>
+  </div>
 ))}
     </div>
   );
