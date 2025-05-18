@@ -85,16 +85,17 @@ export default function Meeting() {
       localStorage.setItem("finalTranscript", transcript);
       const user = auth.currentUser;
       if (user && transcript.trim()) {
-const docRef = await addDoc(collection(db, "meetings"), {
-  uid: user.uid,
-  transcript,
-  createdAt: serverTimestamp(),
-  summary: null,
-});
-localStorage.setItem("meetingId", docRef.id);
+        const docRef = await addDoc(collection(db, "meetings"), {
+          uid: user.uid,
+          transcript,
+          createdAt: serverTimestamp(),
+          summary: null,
+          });
+        localStorage.setItem("meetingId", docRef.id);
       }
       navigate("/summary");
-    } catch (err) {
+    } 
+    catch (err) {
       console.error("stopRecording() failed:", err);
       alert("An error occurred while stopping the meeting:\n" + err.message);
     }
@@ -194,9 +195,9 @@ localStorage.setItem("meetingId", docRef.id);
               {recording ? "Stop Recording" : "Start Meeting"}
             </button>
             {recording && (
-  <div className="mt-2 text-sm text-green-600 font-medium">
-    🎙️ Recording in progress…
-  </div>
+              <div className="mt-2 text-sm text-green-600 font-medium">
+                Recording in progress…
+              </div>
 )}
           </div>
 
