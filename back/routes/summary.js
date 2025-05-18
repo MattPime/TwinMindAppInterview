@@ -24,21 +24,15 @@ Transcript:\n\n${transcript}`
       ]
     });
 
-    const content = chat.choices[0].message.content;
-    // Simple parser to split on section titles (e.g., ### Section)
-const sections = content
-  .split(/^#+\s*/gm)
-  .map(chunk => chunk.trim())
-  .filter(Boolean)
-  .map(text => {
-    const [titleLine, ...rest] = text.split('\n');
-    return {
-      title: titleLine.trim(),
-      content: rest.join('\n').trim(),
-    };
-  });
+const content = chat.choices[0].message.content;
 
-res.json({ sections });
+    // Wrap it in a fake section if you don’t want to parse
+    res.json({
+      sections: [
+        { title: "Meeting Summary", content }
+      ]
+    });
+
   } catch (err) {
     console.error('Summary error:', err);
     res.status(500).json({ error: 'Summary generation failed' });
