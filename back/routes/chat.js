@@ -1,21 +1,29 @@
-router.post('/chat', async (req, res) => {
+import express from 'express';
+import OpenAI from 'openai';
+
+const router = express.Router();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+router.post('/', async (req, res) => {
   const { transcript, question } = req.body;
 
-  const messages = [
-    { role: "system", content: "You are a helpful assistant helping summarize meeting notes." },
-    { role: "user", content: `Transcript: ${transcript}\n\nQuestion: ${question}` }
-  ];
-
   try {
-    const chat = await openai.createChatCompletion({
+    const chat = await openai.chat.completions.create({
       model: "gpt-4",
-      messages,
+      messages: [
+        { role: "system", content: "You are a helpful assistant answering questions about meeting transcripts." },
+        { role: "user", content: `Transcript: ${transcript}\n\nQuestion: ${question}` }
+      ]
     });
-    res.json({ response: chat.data.choices[0].message.content });
+
+    res.json({ response: chat.choices[0].message.content });
   } catch (err) {
-    console.error("Chat error:", err);
-    res.status(500).json({ error: "Chat failed" });
+    console.error('Chat error:', err);
+    res.status(500).json({ error: 'Chat API failed' });
   }
 });
 
+export default router;
 
