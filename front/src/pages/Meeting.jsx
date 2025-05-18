@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
@@ -123,6 +122,11 @@ export default function Meeting() {
   }
 };
 
+  {recording && (
+  <div className="mt-2 text-sm text-green-600 font-medium">
+    🎙️ Recording in progress…
+  </div>
+)}
 
   const connectCalendar = async () => {
     try {
@@ -196,7 +200,6 @@ export default function Meeting() {
             </button>
           </div>
 
-          {recording && <p className="text-sm text-gray-400 mb-2">(Recording simulated — Whisper disabled)</p>}
 
           <div className="mt-6 bg-white p-4 rounded-lg shadow text-gray-700">
           <h2 className="font-semibold text-lg mb-2">Transcript:</h2>
