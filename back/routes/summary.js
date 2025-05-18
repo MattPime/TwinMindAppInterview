@@ -15,7 +15,11 @@ router.post('/', async (req, res) => {
       messages: [
         {
           role: "user",
-          content: `You are an AI assistant. Summarize this transcript into sections with titles and bullet points:\n\n${transcript}`
+          content: `Summarize the following meeting transcript into 3–5 clear sections. For each section:
+- Start with a title (e.g., "Project Updates")
+- Follow with 2–5 bullet points
+- Use Markdown formatting
+Transcript:\n\n${transcript}`
         }
       ]
     });
