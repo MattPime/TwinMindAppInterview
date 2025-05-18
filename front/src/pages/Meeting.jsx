@@ -100,27 +100,29 @@ export default function Meeting() {
     }
   };
 
-  const sendAudioChunk = async () => {
-    const blob = new Blob(audioChunks.current, { type: "audio/webm" });
-    audioChunks.current = [];
-    const formData = new FormData();
-    formData.append("audio", blob);
-    const token = localStorage.getItem("token");
+ const sendAudioChunk = async () => {
+  const blob = new Blob(audioChunks.current, { type: "audio/webm" });
+  audioChunks.current = [];
 
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/asr`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.transcript) {
-        setTranscript((prev) => prev + "\n" + data.transcript);
-      }
-    } catch (err) {
-      console.error("ASR error:", err);
+  const formData = new FormData();
+  formData.append("audio", blob);
+
+  try {
+    const res = await fetch("https://twinmindappinterview.onrender.com/api/asr", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    console.log("ASR response:", data);
+    if (data.transcript) {
+      setTranscript((prev) => prev + "\n" + data.transcript);
     }
-  };
+  } catch (err) {
+    console.error("ASR error:", err);
+  }
+};
+
 
   const connectCalendar = async () => {
     try {
