@@ -13,7 +13,7 @@ app.use(express.json());
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-app.use(asrRoute);
+app.use('/api/asr', asrRoute);
 app.use("/api/chat", chatRoutes);
 app.use("/api/summary", summaryRoutes);
 
