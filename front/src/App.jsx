@@ -4,6 +4,7 @@ import Meeting from "./pages/Meeting.jsx";
 import Summary from "./pages/Summary.jsx";
 
 function App() {
+  //Render JSX
   return (
     <BrowserRouter>
       <Routes>
