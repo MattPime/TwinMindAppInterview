@@ -9,7 +9,6 @@ const upload = multer({ dest: 'uploads/' });
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-const openai = new OpenAIApi(configuration);
 
 router.post('/', upload.single('audio'), async (req, res) => {
   try {
