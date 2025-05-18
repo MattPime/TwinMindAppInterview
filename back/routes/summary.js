@@ -26,7 +26,7 @@ Transcript:\n\n${transcript}`
 
     const content = chat.choices[0].message.content;
     // Simple parser to split on section titles (e.g., ### Section)
-const sections = rawText
+const sections = content
   .split(/^#+\s*/gm)
   .map(chunk => chunk.trim())
   .filter(Boolean)
