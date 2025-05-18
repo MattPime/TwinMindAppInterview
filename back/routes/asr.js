@@ -4,7 +4,14 @@ import fs from 'fs';
 import OpenAI from 'openai';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: (req, file, cb) => {
+    cb(null, `audio-${Date.now()}.webm`);
+  }
+});
+const upload = multer({ storage });
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
