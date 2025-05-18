@@ -23,7 +23,7 @@ export default function ChatBox({ transcript }) {
       const res = await fetch(`${BACKEND_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript, query }),
+        body: JSON.stringify({ transcript, question: query }),
       });
 
       const reader = res.body.getReader();
@@ -40,6 +40,17 @@ export default function ChatBox({ transcript }) {
           )
         );
       }
+
+      if (!result) {
+  setMessages((prev) =>
+    prev.map((msg, i) =>
+      i === prev.length - 1
+        ? { ...msg, text: "Sorry, no response from assistant." }
+        : msg
+    )
+  );
+}
+
     } catch (err) {
       console.error("Chat error:", err);
       setMessages((prev) =>
