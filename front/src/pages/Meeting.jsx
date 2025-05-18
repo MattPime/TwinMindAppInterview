@@ -15,6 +15,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import ReactDOM from "react-dom/client";
 import App from "../App.jsx";
 import "../index.css";
+import MeetingCard from "../components/MeetingCard";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
@@ -211,15 +212,9 @@ export default function Meeting() {
       </div>
 
         <div className="mt-10">
-          <h2 className="text-lg font-semibold mb-4">Past Meetings</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {pastMeetings.map((meeting) => (
-              <Link key={meeting.id} to={`/meeting/${meeting.id}`} className="block p-4 bg-gray-50 border rounded-xl shadow-sm hover:shadow-lg transition">
-                <div className="text-gray-700 font-medium">
-                  {new Date(meeting.createdAt?.seconds * 1000).toLocaleString()}
-                </div>
-                <div className="text-sm text-blue-500">View transcript →</div>
-              </Link>
+          <div className="grid gap-4">
+            {pastMeetings.map((m) => (
+            <MeetingCard key={m.id} id={m.id} createdAt={m.createdAt} />
             ))}
           </div>
         </div>
