@@ -1,13 +1,13 @@
 import express from 'express';
 import multer from 'multer';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from "openai";
 import fs from 'fs';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
 const openai = new OpenAIApi(configuration);
 
