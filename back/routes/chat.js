@@ -1,26 +1,21 @@
-import express from "express";
-const router = express.Router();
+router.post('/chat', async (req, res) => {
+  const { transcript, question } = req.body;
 
-router.post("/", async (req, res) => {
-  const { transcript, query } = req.body;
-
-  res.setHeader("Content-Type", "text/plain");
-  res.setHeader("Transfer-Encoding", "chunked");
-
-  const chunks = [
-    "That's a great question. ",
-    "Based on the transcript, ",
-    "it seems the discussion focused on project progress. ",
-    "Let me explain further... ",
+  const messages = [
+    { role: "system", content: "You are a helpful assistant helping summarize meeting notes." },
+    { role: "user", content: `Transcript: ${transcript}\n\nQuestion: ${question}` }
   ];
 
-  for (const chunk of chunks) {
-    res.write(chunk);
-    await new Promise((r) => setTimeout(r, 400));
+  try {
+    const chat = await openai.createChatCompletion({
+      model: "gpt-4",
+      messages,
+    });
+    res.json({ response: chat.data.choices[0].message.content });
+  } catch (err) {
+    console.error("Chat error:", err);
+    res.status(500).json({ error: "Chat failed" });
   }
-
-  res.end();
 });
 
-export default router;
 
