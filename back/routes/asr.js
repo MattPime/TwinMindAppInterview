@@ -1,27 +1,31 @@
 import express from 'express';
 import multer from 'multer';
-import OpenAI from "openai";
 import fs from 'fs';
+import OpenAI from 'openai';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 router.post('/', upload.single('audio'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No audio file uploaded" });
+  }
+
   try {
-    const transcription = await openai.audio.transcriptions.create({
+    const response = await openai.audio.transcriptions.create({
       file: fs.createReadStream(req.file.path),
       model: 'whisper-1',
     });
 
-    fs.unlinkSync(req.file.path);
-    res.json({ transcript: transcription.text });
+    fs.unlinkSync(req.file.path); // clean up temp file
+    res.json({ transcript: response.text });
   } catch (err) {
-    console.error("Whisper API error:", err);
-    res.status(500).json({ error: 'Failed to transcribe audio' });
+    console.error("🔥 Whisper error:", err?.response?.data || err.message || err);
+    res.status(500).json({ error: 'Whisper transcription failed' });
   }
 });
 
