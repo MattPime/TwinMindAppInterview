@@ -83,9 +83,7 @@ return <div className="p-6 text-red-500">
 
         {summary.sections.map((section, index) => (
           <div key={index} className="bg-gray-50 p-3 rounded">
-          {section.content.split('\n').map((line, i) => (
-            <p key={i} className="ml-4 list-disc">{line}</p>
-          ))}
+          <span className="font-bold">Section {index + 1}:</span> {section.content}
           </div>
         ))}
       ))}
