@@ -1,22 +1,38 @@
-router.post('/summary', async (req, res) => {
+import express from 'express';
+import OpenAI from 'openai';
+
+const router = express.Router();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+router.post('/', async (req, res) => {
   const { transcript } = req.body;
 
-  const prompt = `Here is a meeting transcript. Break it down into sections with titles and bullet point summaries:\n\n${transcript}`;
-
   try {
-    const chat = await openai.createChatCompletion({
+    const chat = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
-        { role: "user", content: prompt }
+        {
+          role: "user",
+          content: `You are an AI assistant. Summarize this transcript into sections with titles and bullet points:\n\n${transcript}`
+        }
       ]
     });
 
-    const text = chat.data.choices[0].message.content;
+    const content = chat.choices[0].message.content;
 
-    // Optional: parse into sections if structured
-    res.json({ sections: [{ title: "Summary", content: text }] });
+    // Wrap it in a fake section if you don’t want to parse
+    res.json({
+      sections: [
+        { title: "Meeting Summary", content }
+      ]
+    });
   } catch (err) {
-    console.error("Summary error:", err);
-    res.status(500).json({ error: "Summary generation failed" });
+    console.error('Summary error:', err);
+    res.status(500).json({ error: 'Summary generation failed' });
   }
 });
+
+export default router;
+
