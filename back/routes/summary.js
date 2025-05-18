@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
         {
           role: "user",
           content: `Summarize the following meeting transcript into 3–5 clear sections. For each section:
-- Start with a title (e.g., "Project Updates") that is in bold
+- Start with a title (e.g., "Project Updates")
 - Follow with 2–5 bullet points, with a line break after each one
 Transcript:\n\n${transcript}`
         }
