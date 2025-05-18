@@ -12,15 +12,16 @@ const openai = new OpenAI({
 
 router.post('/', upload.single('audio'), async (req, res) => {
   try {
-    const resp = await openai.createTranscription(
-      fs.createReadStream(req.file.path),
-      'whisper-1'
-    );
-    fs.unlinkSync(req.file.path); // cleanup
-    res.json({ transcript: resp.data.text });
+    const transcription = await openai.audio.transcriptions.create({
+      file: fs.createReadStream(req.file.path),
+      model: 'whisper-1',
+    });
+
+    fs.unlinkSync(req.file.path);
+    res.json({ transcript: transcription.text });
   } catch (err) {
-    console.error("ASR error:", err.response?.data || err.message);
-    res.status(500).json({ error: "ASR failed" });
+    console.error("Whisper API error:", err);
+    res.status(500).json({ error: 'Failed to transcribe audio' });
   }
 });
 
