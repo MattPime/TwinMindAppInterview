@@ -81,13 +81,16 @@ return <div className="p-6 text-red-500">
 
       <h1 className="text-2xl font-semibold mb-4">Meeting Summary</h1>
 
-      <div className="space-y-2">
         {summary.sections.map((section, index) => (
           <div key={index} className="bg-gray-50 p-3 rounded">
-            <span className="font-bold">Section {index + 1}:</span> {section.content}
+            <ul className="mb-4 bg-gray-50 p-3 rounded">
+  <li className="font-bold mb-1">Section {index + 1}:</li>
+  {section.content.split('\n').map((line, i) => (
+    <li key={i} className="ml-4 list-disc">{line}</li>
+  ))}
+</ul>
           </div>
         ))}
-      </div>
       ))}
     </div>
   );
