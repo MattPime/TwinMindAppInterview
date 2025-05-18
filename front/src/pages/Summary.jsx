@@ -79,8 +79,6 @@ return <div className="p-6 text-red-500">
         ← Back to Meeting
       </button>
 
-      <h1 className="text-2xl font-semibold mb-4">Meeting Summary</h1>
-
       {summary.sections.map((section, index) => (
   <div key={index} className="mb-6">
     <h2 className="text-xl font-bold mb-3 text-gray-800">{section.title}</h2>
