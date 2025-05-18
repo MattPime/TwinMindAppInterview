@@ -82,13 +82,31 @@ return <div className="p-6 text-red-500">
       <h1 className="text-2xl font-semibold mb-4">Meeting Summary</h1>
 
       {summary.sections.map((section, index) => (
-        <div key={index} className="mb-6">
-          <h2 className="text-lg font-semibold mb-2 text-gray-700">{section.title}</h2>
-          <p className="bg-gray-100 p-4 rounded whitespace-pre-line text-gray-800">
-            {section.content}
-          </p>
-        </div>
-      ))}
+  <div key={index} className="mb-6">
+    <h2 className="text-xl font-bold mb-3 text-gray-800">{section.title}</h2>
+    <div className="space-y-4">
+      {section.content.split("\n\n").map((block, i) => {
+        if (block.startsWith("**") && block.endsWith("**")) {
+          return (
+            <h3 key={i} className="text-lg font-semibold text-blue-700">
+              {block.replace(/\*\*/g, "")}
+            </h3>
+          );
+        }
+
+        const bullets = block.split("\n").filter(line => line.startsWith("-"));
+        return (
+          <ul key={i} className="list-disc list-inside text-gray-700">
+            {bullets.map((item, j) => (
+              <li key={j}>{item.replace(/^-\s*/, "")}</li>
+            ))}
+          </ul>
+        );
+      })}
+    </div>
+  </div>
+))}
+
     </div>
   );
 }
