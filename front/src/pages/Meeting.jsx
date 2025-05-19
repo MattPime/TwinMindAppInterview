@@ -172,6 +172,12 @@ export default function Meeting() {
     fetchMeetings();
   }, []);
 
+  useEffect(() => {
+  if (gapiLoaded && !isSignedIn) {
+    signIn(); // auto-sign in if token exists
+    }
+  }, [gapiLoaded, isSignedIn, signIn]);
+
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       <div className="p-6 max-w-5xl mx-auto">
