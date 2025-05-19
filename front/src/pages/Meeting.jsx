@@ -17,7 +17,6 @@ import ReactDOM from "react-dom/client";
 import App from "../App.jsx";
 import "../index.css";
 import MeetingCard from "../components/MeetingCard";
-import { useCalendarAuth } from "../services/CalendarAuthContext";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
@@ -26,7 +25,6 @@ export default function Meeting() {
   const [pastMeetings, setPastMeetings] = useState([]);
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [calendarConnected, setCalendarConnected] = useState(false);
-  const { isSignedIn, signIn, gapiLoaded } = useCalendarAuth();
 
   const mediaRecorderRef = useRef(null);
   const audioChunks = useRef([]);
@@ -172,22 +170,15 @@ export default function Meeting() {
     fetchMeetings();
   }, []);
 
-  useEffect(() => {
-  if (gapiLoaded && !isSignedIn) {
-    signIn(); // auto-sign in if token exists
-    }
-  }, [gapiLoaded, isSignedIn, signIn]);
-
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
       <div className="p-6 max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-extrabold text-gray-800">Meeting Dashboard</h1>
           <div className="flex gap-3">
-            <div className="p-6">
-              <h1 className="text-xl font-bold">Meeting Page</h1>
-              <p>{isSignedIn ? "✅ Calendar Connected" : "❌ Not Connected"}</p>
-            </div>
+            <button onClick={connectCalendar} className="px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">
+              {calendarConnected ? "Calendar Connected ✅" : "Connect Calendar"}
+            </button>
             <button onClick={handleSignOut} className="px-4 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-md">
               Sign Out
             </button>
@@ -248,4 +239,5 @@ export default function Meeting() {
     </div>
   );
 }
+
 
