@@ -102,6 +102,7 @@ export default function Meeting() {
   };
 
  const sendAudioChunk = async () => {
+   if (!isSpeaking) return; // Skip sending if no speech detected
   const blob = new Blob(audioChunks.current, { type: "audio/webm" });
   audioChunks.current = [];
 
