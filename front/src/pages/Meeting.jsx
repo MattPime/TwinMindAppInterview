@@ -26,7 +26,7 @@ export default function Meeting() {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [calendarConnected, setCalendarConnected] = useState(false);
 
-  const mediaRecorderRef = useRef(null);
+  const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
   const audioChunks = useRef([]);
   const intervalRef = useRef(null);
   const navigate = useNavigate();
