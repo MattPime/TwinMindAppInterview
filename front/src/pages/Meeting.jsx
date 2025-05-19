@@ -17,7 +17,7 @@ import ReactDOM from "react-dom/client";
 import App from "../App.jsx";
 import "../index.css";
 import MeetingCard from "../components/MeetingCard";
-import { useCalendarAuth } from "./CalendarAuthContext";
+import { useCalendarAuth } from "../services/CalendarAuthContext";
 
 export default function Meeting() {
   const [recording, setRecording] = useState(false);
