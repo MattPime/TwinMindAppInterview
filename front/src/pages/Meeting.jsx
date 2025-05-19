@@ -26,7 +26,7 @@ export default function Meeting() {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [calendarConnected, setCalendarConnected] = useState(false);
 
-  const mediaRecorder = useRef(null);
+  const mediaRecorderRef = useRef(null);
   const audioChunks = useRef([]);
   const intervalRef = useRef(null);
   const navigate = useNavigate();
@@ -102,7 +102,6 @@ export default function Meeting() {
   };
 
  const sendAudioChunk = async () => {
-   if (!isSpeaking) return; // Skip sending if no speech detected
   const blob = new Blob(audioChunks.current, { type: "audio/webm" });
   audioChunks.current = [];
 
@@ -117,7 +116,7 @@ export default function Meeting() {
 
     const data = await res.json();
     console.log("ASR response:", data);
-    if (data.transcript && data.transcript.trim().length > 3) {
+    if (data.transcript) {
       setTranscript((prev) => prev + "\n" + data.transcript);
     }
   } catch (err) {
