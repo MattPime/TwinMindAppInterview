@@ -116,7 +116,7 @@ export default function Meeting() {
 
     const data = await res.json();
     console.log("ASR response:", data);
-    if (data.transcript) {
+    if (data.transcript && data.transcript.trim().length > 3) {
       setTranscript((prev) => prev + "\n" + data.transcript);
     }
   } catch (err) {
