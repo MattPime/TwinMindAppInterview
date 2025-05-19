@@ -29,6 +29,12 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
+      {/* Project Title */}
+      <h1 className="text-4xl font-bold text-blue-600 mb-2">TwinMind Web App Assignment</h1>
+
+      {/* Author Name */}
+      <p className="text-gray-600 mb-8 text-sm">by Matthew Pimentel</p>
+      
       <button
         onClick={handleLogin}
         className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow"
